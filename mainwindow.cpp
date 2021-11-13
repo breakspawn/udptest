@@ -47,10 +47,11 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    QStringList strlist;
 
     ui->adaptersend->addItem("not bound");  //-------+
     ui->adapterrcv->addItem("not bound");   //добавляем элемент в комбобокс есди не определен адаптер(для широковещяния)
-
+    ui->transformcb->addItems(QStringList()<<"HEX"<<"BIN"<<"NOT TRANSFORM");
     //получаем Map доступных адаптеров
     auto list = ifaces();
 
@@ -83,7 +84,7 @@ void MainWindow::on_sendbt_clicked()
         QMessageBox::warning(this, "Warning", "Invalid port");
         return;
     }
-    //передаем заматченый порт в int
+    //присваиваем заматченый порт в int
     uint16_t port = matchPort.captured("port").toUShort();
 
     //Определяем QhostAddress широковещательным
@@ -115,7 +116,7 @@ void MainWindow::on_sendbt_clicked()
     //если выбранн любой другой доступный IP присваиваем его адаптеру
     else adapter = QHostAddress(ui->adaptersend->currentText());
     //биндем сокет
-          //   |ip    |порт    |ENUM  передаем в аргументы, чтоб остальные функции могли пользоваться сокетом
+    //   |ip    |порт    |ENUM  передаем в аргументы, чтоб остальные функции могли пользоваться сокетом
     sock.bind(adapter, port, QAbstractSocket::ShareAddress);
     //если не ввели ничего в строку "Данные"
     if(ui->textinput->text().isEmpty()) {
@@ -125,12 +126,12 @@ void MainWindow::on_sendbt_clicked()
     //введеные данные переводим в 8 бит и массив байт
     QByteArray data = ui->textinput->text().toLocal8Bit();
 
-        //отправляем данные через сокет
-        //            массив байт
-        //                  | адрес куда отправить
-        //                  |      |    порт
+    //отправляем данные через сокет
+    //            массив байт
+    //                  | адрес куда отправить
+    //                  |      |    порт
     if(!sock.writeDatagram(data, dest, port)) {
-         //если отправка не получилась
+        //если отправка не получилась
         QMessageBox::warning(this, "Warning", "Error send");
 
     }
@@ -148,6 +149,9 @@ void MainWindow::on_connectbt_clicked()
         // если нет сокет открываем его,                        | лямбда функция, для удаления указателя, при удалении меняем название кнопки на "Listen"
         sock_rcv = std::shared_ptr<QUdpSocket>(new QUdpSocket, [&](QUdpSocket *p){
                 ui->connectbt->setText("Listen");
+                ui->from->setText("From: ");
+                ui->labelconn->clear();
+
                 delete p;
     });
         QRegularExpression rePort(R"(^(?<port>[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-3][0-9]|6553[0-5])$)");
@@ -175,20 +179,37 @@ void MainWindow::on_connectbt_clicked()
         //при подключении меняем имя кнопки на "Close"
         ui->connectbt->setText("Close");
 
+        ui->labelconn->setText(adapter.toString() + ":" + QString::number(port));
+
+
+
         //слушаем UDP     Готовность чтения данных             Лямбда фунция для принятия данных из сокета
         connect(sock_rcv.get(), &QUdpSocket::readyRead, this, [&](){
             //если есть датаграммы возвращает true
             while (sock_rcv->hasPendingDatagrams()) {
                 QByteArray data;
-
+                QHostAddress from;
                 data.resize(sock_rcv->pendingDatagramSize()); // принимаем размер датаграммы из сокета
 
-                sock_rcv->readDatagram(data.data(), data.size()); //запись в массив данных полученых из сокета, и принимаем размер полученных данных
+                sock_rcv->readDatagram(data.data(), data.size(), &from); //запись в массив данных полученых из сокета, и принимаем размер полученных данных
 
                 ui->lenrcv->setNum(data.size()); //получаем размер байт преданных данных (в нашем случаем char)
-                ui->textBrowser->setText(glb::hex(data)); //  выводим полученные данные в HEX
                 ui->totalrcv->setNum(++totalrcv);  // колличество  раз принятых данных
 
+                ui->from->setText("From: " + from.toString());
+                QString transformbox =  ui->transformcb->currentText();
+                QString result;
+                if(transformbox == "BIN") {
+                    result = glb::bin(data);
+                }
+                else if (transformbox == "HEX") {
+                    result = glb::hex(data);
+                }
+                else
+                    result = data;
+
+
+                ui->textBrowser->setText(result); //  выводим полученные данные в HEX
 
 
             }
@@ -199,4 +220,9 @@ void MainWindow::on_connectbt_clicked()
 void MainWindow::on_clearbt_clicked()
 {
     ui->textBrowser->clear();
+}
+
+void MainWindow::on_actionAbout_QT_triggered()
+{
+    QMessageBox::aboutQt(this);
 }

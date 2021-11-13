@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>550</width>
-    <height>433</height>
+    <height>501</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>550</width>
-    <height>20</height>
+    <height>450</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -31,6 +31,13 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>
+     <widget class="QLabel" name="label_7">
+      <property name="text">
+       <string>SEND</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QFrame" name="frame">
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
@@ -44,7 +51,7 @@
          <item row="0" column="0">
           <widget class="QLabel" name="label_3">
            <property name="text">
-            <string>Адаптер</string>
+            <string>Adapter</string>
            </property>
           </widget>
          </item>
@@ -54,7 +61,7 @@
          <item row="1" column="0">
           <widget class="QLabel" name="label">
            <property name="text">
-            <string>Порт</string>
+            <string>Port</string>
            </property>
           </widget>
          </item>
@@ -64,14 +71,14 @@
          <item row="1" column="2">
           <widget class="QPushButton" name="sendbt">
            <property name="text">
-            <string>Отправить</string>
+            <string>Send</string>
            </property>
           </widget>
          </item>
          <item row="2" column="0">
           <widget class="QLabel" name="label_2">
            <property name="text">
-            <string>Адрес</string>
+            <string>IPv4</string>
            </property>
           </widget>
          </item>
@@ -81,7 +88,7 @@
          <item row="3" column="0">
           <widget class="QLabel" name="label_4">
            <property name="text">
-            <string>Данные</string>
+            <string>Data</string>
            </property>
           </widget>
          </item>
@@ -91,6 +98,20 @@
         </layout>
        </item>
       </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="Line" name="line">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_8">
+      <property name="text">
+       <string>RECEIVE</string>
+      </property>
      </widget>
     </item>
     <item>
@@ -107,7 +128,7 @@
          <item row="1" column="0">
           <widget class="QLabel" name="label_5">
            <property name="text">
-            <string>Адаптер</string>
+            <string>Adapter</string>
            </property>
           </widget>
          </item>
@@ -115,32 +136,39 @@
           <widget class="QComboBox" name="adapterrcv"/>
          </item>
          <item row="0" column="1">
-          <widget class="QLabel" name="label_7">
+          <widget class="QLabel" name="labelconn">
            <property name="text">
-            <string>Отключён</string>
+            <string/>
            </property>
           </widget>
          </item>
          <item row="2" column="1" rowspan="2">
           <widget class="QLineEdit" name="portrcv"/>
          </item>
-         <item row="2" column="2" rowspan="2">
-          <widget class="QPushButton" name="connectbt">
-           <property name="text">
-            <string>Подключиться</string>
-           </property>
-          </widget>
-         </item>
          <item row="2" column="0" rowspan="2">
           <widget class="QLabel" name="label_6">
            <property name="text">
-            <string>Порт</string>
+            <string>Port</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QPushButton" name="connectbt">
+           <property name="text">
+            <string>Listen</string>
            </property>
           </widget>
          </item>
         </layout>
        </item>
       </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="from">
+      <property name="text">
+       <string>From:</string>
+      </property>
      </widget>
     </item>
     <item>
@@ -151,9 +179,12 @@
       <item row="0" column="1">
        <widget class="QPushButton" name="clearbt">
         <property name="text">
-         <string>очистить</string>
+         <string>Clear</string>
         </property>
        </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="transformcb"/>
       </item>
      </layout>
     </item>
@@ -162,7 +193,7 @@
       <item>
        <widget class="QLabel" name="send_count">
         <property name="text">
-         <string>Всего:</string>
+         <string>Total:</string>
         </property>
        </widget>
       </item>
@@ -189,7 +220,7 @@
       <item>
        <widget class="QLabel" name="lastlen">
         <property name="text">
-         <string>Последняя длина:</string>
+         <string>Length:</string>
         </property>
        </widget>
       </item>
@@ -231,9 +262,18 @@
     <property name="title">
      <string>about </string>
     </property>
+    <addaction name="actionAbout_QT"/>
    </widget>
    <addaction name="menuudp_test_tool"/>
   </widget>
+  <action name="actionAbout_QT">
+   <property name="text">
+    <string>About QT</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::AboutQtRole</enum>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

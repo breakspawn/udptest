@@ -22,6 +22,8 @@ private slots:
 
     void on_clearbt_clicked();
 
+    void on_actionAbout_QT_triggered();
+
 private:
     Ui::MainWindow *ui;
 };
